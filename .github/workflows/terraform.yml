@@ -4,6 +4,7 @@ on:
   push:
     branches: 
       - main
+  workflow_dispatch: # Allows manual trigger of workflow for confirmation
 
 permissions:
   contents: read
@@ -12,22 +13,22 @@ jobs:
   terraform:
     name: Terraform
     runs-on: self-hosted
+    environment: production
 
     steps:
       # Checkout the repository
       - name: Checkout
         uses: actions/checkout@v4
 
-   # Set PowerShell Execution Policy
+      # Bypass PowerShell Execution Policy
       - name: Set PowerShell Execution Policy
         run: powershell.exe -ExecutionPolicy Bypass -Command "Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned -Force"
-        shell: powershell
 
-      # # Install Terraform CLI
-      # - name: Setup Terraform
-      #   uses: hashicorp/setup-terraform@v1
-      #   with:
-      #     terraform_version: latest
+      # Install Terraform CLI
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: latest
 
       # Initialize Terraform
       - name: Terraform Init
@@ -35,9 +36,26 @@ jobs:
 
       # Plan Terraform changes
       - name: Terraform Plan
+        env:
+          TF_VAR_CONFLUENT_CLOUD_API_KEY: ${{ secrets.TF_VAR_CONFLUENT_CLOUD_API_KEY }}
+          TF_VAR_CONFLUENT_CLOUD_API_SECRETS: ${{ secrets.TF_VAR_CONFLUENT_CLOUD_API_SECRETS }}
         run: terraform plan -out=tfplan
 
-      # Apply Terraform changes on push to main
+  apply:
+    name: Apply Terraform
+    needs: terraform
+    runs-on: windows-latest
+    environment: production
+
+    steps:
+      # Manual approval step
+      - name: Require Approval
+        uses: microsoft/pipelines-manual-approval-action@v1
+
+      # Apply Terraform changes
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          TF_VAR_CONFLUENT_CLOUD_API_KEY: ${{ secrets.TF_VAR_CONFLUENT_CLOUD_API_KEY }}
+          TF_VAR_CONFLUENT_CLOUD_API_SECRETS: ${{ secrets.TF_VAR_CONFLUENT_CLOUD_API_SECRETS }}
         run: terraform apply -auto-approve tfplan
+
