@@ -38,7 +38,7 @@ jobs:
   apply:
     name: Apply Terraform
     needs: terraform
-    runs-on: windows-latest
+    runs-on: self-hosted
     environment: production
 
     steps:
