@@ -24,12 +24,6 @@ jobs:
       - name: Set PowerShell Execution Policy
         run: powershell.exe -ExecutionPolicy Bypass -Command "Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned -Force"
 
-      # Install Terraform CLI
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: latest
-
       # Initialize Terraform
       - name: Terraform Init
         run: terraform init
