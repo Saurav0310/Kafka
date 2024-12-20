@@ -18,16 +18,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Set PowerShell Execution Policy
+   # Set PowerShell Execution Policy
       - name: Set PowerShell Execution Policy
-        run: Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned -Force
+        run: powershell.exe -ExecutionPolicy Bypass -Command "Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned -Force"
         shell: powershell
 
-      # Install Terraform CLI
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: latest
+      # # Install Terraform CLI
+      # - name: Setup Terraform
+      #   uses: hashicorp/setup-terraform@v1
+      #   with:
+      #     terraform_version: latest
 
       # Initialize Terraform
       - name: Terraform Init
