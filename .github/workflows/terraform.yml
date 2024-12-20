@@ -21,7 +21,7 @@ jobs:
       # Set PowerShell Execution Policy
       - name: Set PowerShell Execution Policy
         run: Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned -Force
-        shell: pwsh
+        shell: powershell
 
       # Install Terraform CLI
       - name: Setup Terraform
