@@ -12,16 +12,22 @@ jobs:
   terraform:
     name: Terraform
     runs-on: self-hosted
+
     steps:
       # Checkout the repository
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Set PowerShell Execution Policy
+      - name: Set PowerShell Execution Policy
+        run: Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned -Force
+        shell: pwsh
+
       # Install Terraform CLI
-      # - name: Setup Terraform
-      #   uses: hashicorp/setup-terraform@v1
-      #   with:
-      #     terraform_version: latest
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: latest
 
       # Initialize Terraform
       - name: Terraform Init
